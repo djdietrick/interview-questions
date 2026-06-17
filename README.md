@@ -84,9 +84,9 @@ rm -rf /tmp/order-entry-form/_solution /tmp/order-entry-form/node_modules /tmp/o
 |---|---|---|---|
 | `order-entry-form` | Forms & validation, derived state, number formatting | 5 | ✅ |
 | `trade-blotter` | Grids, sort/filter, inline editing, immutability | 5 | ✅ |
+| `live-price-feed` | Hooks & effects, `setInterval` cleanup, stale closures, derived state | 5 | ✅ |
 
 ### Planned (from the design discussion)
-- **position-pnl** — live price feed, derived aggregates, effect cleanup.
 - **instrument-search** — debounce, loading/error states, race conditions.
 
 ## Adding a new app
