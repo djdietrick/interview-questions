@@ -1,0 +1,135 @@
+:root {
+  --bg: #0f1419;
+  --panel: #1a2029;
+  --panel-2: #222a35;
+  --border: #2e3744;
+  --text: #e6e9ee;
+  --muted: #8b95a3;
+  --accent: #4f8cff;
+  --buy: #1f9d55;
+  --sell: #e0245e;
+  --error: #ff6b6b;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  padding: 32px;
+}
+
+/* ---- Order Entry Form ---- */
+.ticket {
+  max-width: 420px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.side-toggle {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.side-toggle button {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  color: var(--text);
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.side-toggle button.buy.active {
+  background: var(--buy);
+  border-color: var(--buy);
+}
+
+.side-toggle button.sell.active {
+  background: var(--sell);
+  border-color: var(--sell);
+}
+
+.field {
+  margin-bottom: 16px;
+}
+
+.field label {
+  display: block;
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.field input,
+.field select {
+  width: 100%;
+  padding: 10px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 14px;
+}
+
+.field input:focus,
+.field select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.field .error-text {
+  color: var(--error);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.summary {
+  border-top: 1px solid var(--border);
+  margin-top: 20px;
+  padding-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 15px;
+}
+
+.summary .cost {
+  font-weight: 700;
+}
+
+.submit-btn {
+  width: 100%;
+  margin-top: 20px;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: var(--accent);
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.submit-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.confirmation {
+  margin-top: 16px;
+  padding: 12px;
+  border-radius: 8px;
+  background: rgba(31, 157, 85, 0.12);
+  border: 1px solid var(--buy);
+  font-size: 14px;
+}

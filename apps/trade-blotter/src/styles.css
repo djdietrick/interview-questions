@@ -1,0 +1,167 @@
+:root {
+  --bg: #0f1419;
+  --panel: #1a2029;
+  --panel-2: #222a35;
+  --border: #2e3744;
+  --text: #e6e9ee;
+  --muted: #8b95a3;
+  --accent: #4f8cff;
+  --buy: #1f9d55;
+  --sell: #e0245e;
+  --error: #ff6b6b;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  padding: 32px;
+}
+
+/* ---- Trade Blotter ---- */
+.blotter {
+  max-width: 760px;
+}
+
+.blotter-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.blotter-filter {
+  flex: 1;
+  max-width: 280px;
+  padding: 9px 12px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 14px;
+}
+
+.blotter-filter:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.blotter-count {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+table.grid {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  font-size: 14px;
+}
+
+table.grid th,
+table.grid td {
+  padding: 10px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+table.grid th {
+  background: var(--panel-2);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+table.grid td.num,
+table.grid th.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+table.grid tbody tr:hover {
+  background: var(--panel-2);
+}
+
+td.buy {
+  color: var(--buy);
+  text-transform: capitalize;
+}
+
+td.sell {
+  color: var(--sell);
+  text-transform: capitalize;
+}
+
+.qty-cell {
+  cursor: text;
+  border-bottom: 1px dashed var(--border);
+  padding-bottom: 1px;
+}
+
+.qty-edit {
+  width: 72px;
+  padding: 4px 6px;
+  text-align: right;
+  background: var(--bg);
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+.qty-edit:focus {
+  outline: none;
+}
+
+.status {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.status-filled {
+  background: rgba(31, 157, 85, 0.15);
+  color: var(--buy);
+}
+
+.status-working {
+  background: rgba(79, 140, 255, 0.15);
+  color: var(--accent);
+}
+
+.status-cancelled {
+  background: rgba(139, 149, 163, 0.15);
+  color: var(--muted);
+}
+
+table.grid tfoot td {
+  border-bottom: none;
+  border-top: 2px solid var(--border);
+  font-weight: 600;
+}
+
+.footer-label {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.footer-total {
+  font-variant-numeric: tabular-nums;
+}

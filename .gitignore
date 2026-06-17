@@ -1,0 +1,15 @@
+# Per-app build output / deps (each app is its own project)
+**/node_modules
+**/dist
+**/dist-ssr
+
+# Generated candidate packages (regenerate with tools/package-for-codeinterview.sh)
+dist-candidate
+*.local
+.DS_Store
+*.log
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea
