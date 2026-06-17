@@ -68,13 +68,11 @@ export default function App() {
   useEffect(() => {
     if (paused) return;
     setInterval(() => {
-      setQuotes(
-        quotes.map((q) => ({
-          ...q,
-          prevPrice: q.price,
-          price: nextPrice(q.price),
-        }))
-      );
+      quotes.forEach((q) => {
+        q.prevPrice = q.price;
+        q.price = nextPrice(q.price);
+      });
+      setQuotes(quotes);
     }, SPEED_MS[speed]);
   }, [paused, speed]);
 

@@ -26,39 +26,43 @@ its dependencies, and what belongs in state vs. what should be derived. This is 
 
 ---
 
-## Bug 1 — Interval callback reads `quotes` from a stale closure
-**Where:** the price-feed effect, `setQuotes(quotes.map(...))`.
+## Bug 1 — State is mutated in place; board never updates
+**Where:** the price-feed effect's interval callback.
 ```ts
-useEffect(() => {
-  if (paused) return;
-  setInterval(() => {
-    setQuotes(
-      quotes.map((q) => ({ ...q, prevPrice: q.price, price: nextPrice(q.price) }))
-    );
-  }, SPEED_MS[speed]);
-}, [paused, speed]);
+setInterval(() => {
+  quotes.forEach((q) => {
+    q.prevPrice = q.price;   // mutates the existing Quote objects
+    q.price = nextPrice(q.price);
+  });
+  setQuotes(quotes);         // same array reference → React bails out
+}, SPEED_MS[speed]);
 ```
-**Why it's wrong:** the interval closes over `quotes` as it was when the effect last
-ran (mount, or the last pause/speed change). The dependency array is `[paused, speed]`,
-so it does **not** re-subscribe when `quotes` changes. Every tick therefore rebuilds
-the array from the *same* starting prices, so prices jitter around their opening
-values but **never trend** — and `prevPrice` is always the open, not the prior tick.
+**Why it's wrong:** `quotes.forEach` mutates the objects *inside* the existing
+array; `setQuotes(quotes)` then hands React the same array reference it already
+holds. `Object.is(prev, next)` is `true`, so React sees no change and skips
+re-rendering. The board appears completely frozen from the moment it loads.
 
-**Fix:** use the functional updater so each tick builds on the latest state:
+The mutation also corrupts the data silently: `prevPrice` is written to the same
+object that the rest of the render is still reading, so the flash-direction logic
+(`q.price > q.prevPrice`) will always see `false` even once the bug is fixed — you
+have to fix immutability *and* the flash effect to see the board work correctly.
+
+**Fix:** produce a new array of new objects, and use the functional updater so each
+tick builds on the latest state rather than a stale closure value:
 ```ts
 setQuotes((prev) =>
   prev.map((q) => ({ ...q, prevPrice: q.price, price: nextPrice(q.price) }))
 );
 ```
-**What good looks like:** recognizes the stale closure from reading alone (a setter
-inside `setInterval` that references state but isn't in the deps is a red flag);
-explains that the fix is the updater function, not adding `quotes` to the deps
-(which would tear down and recreate the interval on every tick). Senior signal:
-mentions the `useRef`-of-latest-value alternative and why the functional updater is
-cleaner here.
+**What good looks like:** immediately identifies the mutation as the problem
+(checking whether `setQuotes` receives a new reference is the first thing to reach
+for); knows that `Object.is` is how React decides whether to re-render; understands
+why a new-array + spread is the idiomatic fix. Stronger answer also catches the
+stale closure risk — if you spread but don't use the functional updater, the
+interval closes over the initial `quotes` and prices stop trending after a
+pause/speed change — and explains that the updater addresses both problems at once.
 
-**Repro:** let it run ~15s. Watch "Chg %": it hovers within ±0.5% and never grows,
-because each tick restarts from the opening price.
+**Repro:** load the page → prices never move.
 
 ---
 
@@ -182,11 +186,11 @@ even though no price did.
 1. **2 min** — orient: "This is a live quote board. The spec is in the comment at the
    top. Some things are broken — find them, say what's wrong, and fix what you can."
 2. **Code-review pass (talk first):** ask them to read and call out smells before
-   running. High-signal candidates flag Bug 1 (setter reads `quotes` but it's not a
-   dep) and Bug 2 (no `clearInterval`) from reading alone.
-3. **Debugging pass (run it):** Bug 2 (pause does nothing) and Bug 3 (rows never fade)
-   are obvious on interaction; Bug 4 (frozen counts) shows once prices move; Bug 1
-   (no trend) and Bug 5 (timestamp) reward someone who watches and probes.
+   running. High-signal candidates flag Bug 1 (mutation + same reference) and Bug 2
+   (no `clearInterval`) from reading alone.
+3. **Debugging pass (run it):** Bug 1 (board frozen) is obvious immediately; Bug 2
+   (pause does nothing) and Bug 3 (rows never fade) show on interaction; Bug 4
+   (frozen counts) shows once prices move; Bug 5 (timestamp) rewards careful watching.
 4. **Discussion:** "What's the common thread?" Looking for: effects own a lifecycle
    (set up *and* tear down), functional updates for state that builds on itself,
    derive don't duplicate, and keep render pure.
@@ -201,7 +205,7 @@ even though no price did.
 | Communication | quiet, patches | explains as they go | teaches; ties the five back to one theme |
 
 ## Quick repro cheatsheet
-- **Bug 1:** runs a while → "Chg %" never grows past ±0.5% (every tick restarts from the open).
+- **Bug 1:** load the page → prices never move.
 - **Bug 2:** click **Pause** → feed keeps ticking; switching Speed piles updates up.
 - **Bug 3:** rows light up and never fade.
 - **Bug 4:** prices move but the header ▲/▼ counts stay 6 / 0.
